@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="box.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        function parsePlacement(placement) {
+            switch (placement) {
+                case 1:
+                    return "👑 First"
+                case 2:
+                    return "🥈 Second"
+                case 3:
+                    return "🥉 Third"
+                case 4:
+                    return "Fourth"
+                case 5:
+                    return "Fifth"
+                case 6:
+                    return "Sixth"
+                case 7:
+                    return "Seventh"
+                case 8:
+                    return "Eighth"
+                case 9:
+                    return "Ninth"
+                case 10:
+                    return "Tenth"
+            }
+        }
+
+        function createRecordElement(placement, score) {
+            let element = document.createElement("div");
+            element.classList.add(`i${placement}`)
+
+            let placementElement = document.createElement("p")
+            placementElement.innerText = parsePlacement(parseInt(placement))
+            element.appendChild(placementElement)
+
+            let scoreElement = document.createElement("p");
+            scoreElement.classList.add("score")
+            scoreElement.innerText = score
+            element.appendChild(scoreElement)
+
+            return element
+        }
+
+        function deleteChildren(parent) {
+            while (parent.lastChild) {
+                parent.removeChild(parent.lastChild)
+            }
+        }
+
+        function fetchLeaderboard() {
+            fetch(`http://${window.location.hostname}:5000/leaderboard`)
+                .then(response => response.json())
+                .then(data => {
+                    let boxElement = document.getElementsByClassName("box")[0]
+                    deleteChildren(boxElement)
+
+                    Object.entries(data["result"]).forEach(([placement, score]) => {
+                        let element = createRecordElement(placement, score)
+                        boxElement.appendChild(element)
+                    })
+                })
+        }
+
+        fetchLeaderboard()
+        setInterval(fetchLeaderboard, 2000)
+
+            // Adding scores - via fetch (only for testing purposes ⏬)
+            // fetch('http://127.0.0.1:5000/score/add', {
+            //     method: 'PUT',
+            //     body: JSON.stringify({ "score": 980 }),
+            //     headers: { "Content-Type": "application/json" },
+            // })
+            //     .then((response) => response.json())
+            //     .then((response) => console.log(response))
+
+    </script>
+    <title>Snake Leaderboard</title>
+</head>
+
+<body>
+    <div class="grad-darken">
+        <div class="darken">
+        </div>
+    </div>
+    <div class="center">
+        <div class="box">
+        </div>
+    </div>
+</body>
+
+</html>
